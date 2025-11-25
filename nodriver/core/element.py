@@ -530,17 +530,24 @@ class Element:
 
         """
         try:
-            center = (await self.get_position()).center
+            top = (await self.get_position()).top
+            bottom = (await self.get_position()).bottom
+            left = (await self.get_position()).left
+            right = (await self.get_position()).right
+
         except AttributeError:
             return
-        if not center:
+        if not all([top, bottom, left, right]):
             logger.warning("could not calculate box model for %s", self)
-            return
+            return        
 
-        logger.debug("clicking on location %.2f, %.2f" % center)
+        mouseX = random.uniform(left, right)
+        mouseY = random.uniform(top, bottom)
 
-        await self._tab.mouse_click(center[0], center[1])
-        await self._tab.flash_point(center[0], center[1])
+        logger.debug(f"clicking on location {mouseX:.2f}, {mouseY:.2f}")
+
+        await self._tab.mouse_click(mouseX, mouseY)
+        await self._tab.flash_point(mouseX, mouseY)
 
         # await asyncio.gather(
         #     self._tab.send(
